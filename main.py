@@ -16,6 +16,9 @@ SMTP_PORTA = 587
 
 LINK_EBOOK = 'https://drive.google.com/file/d/1Akd6zzThAvoQug8ksNLEB8xB6ngZQfdE/view?usp=drive_link'
 
+#✅ Defina qual é o external_reference do seu produto:
+EXTERNAL_REFERENCE_DO_EBOOK = 'ebook-amamentacao'  # <- Isso vem da criação do link
+
 # ✅ ROTA RAIZ
 @app.route('/')
 def home():
@@ -36,10 +39,14 @@ def webhook():
                 status = pagamento.get('status')
                 email_cliente = pagamento.get('payer', {}).get('email')
                 nome_cliente = pagamento.get('payer', {}).get('first_name')
+                referencia = pagamento.get('external_reference')  # 🔥 Aqui pega a referência
 
-                if status == 'approved':
+                if status == 'approved' and referencia == EXTERNAL_REFERENCE_DO_EBOOK:
                     enviar_email(email_cliente, nome_cliente)
                     return jsonify({'status': 'Ebook enviado com sucesso!'}), 200
+                else:
+                    print('Pagamento não corresponde ao ebook.')
+                    return jsonify({'status': 'Pagamento não é do ebook.'}), 200
 
     return jsonify({'status': 'Webhook recebido'}), 200
 
