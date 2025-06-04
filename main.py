@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 app = Flask(__name__)
 
 # === CONFIGURAÇÕES ===
-MERCADO_PAGO_ACCESS_TOKEN = 'APP_USR-2946444663060784-060410-0d84fef851c131fd30cef8bae1a6c24f-2000476508'  # ⚠️ Coloque aqui seu token do Mercado Pago
+MERCADO_PAGO_ACCESS_TOKEN = 'APP_USR-212071991546720-020615-7af3f7cfb4ce1628e9d3ec2d0514ca5e-2244698489'  # ⚠️ Coloque aqui seu token do Mercado Pago
 
 EMAIL_REMETENTE = 'nalinnazarethdoula@gmail.com'
 SENHA_EMAIL = 'mgnw npez drxv klug'  # ⚠️ Senha de app, não sua senha normal
@@ -28,18 +28,22 @@ def home():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     dados = request.json
+    print('✅ Webhook recebido:', dados)
 
     if dados and 'type' in dados and dados['type'] == 'payment':
         payment_id = dados.get('data', {}).get('id')
+        print('🆔 Payment ID:', payment_id)
 
         if payment_id:
             pagamento = consultar_pagamento(payment_id)
+            print('📄 Dados do pagamento:', pagamento)
 
             if pagamento:
                 status = pagamento.get('status')
                 email_cliente = pagamento.get('payer', {}).get('email')
                 nome_cliente = pagamento.get('payer', {}).get('first_name')
                 referencia = pagamento.get('external_reference')  # 🔥 Aqui pega a referência
+                print(f'🔍 Status: {status} | Email: {email_cliente} | Nome: {nome_cliente}')
 
                 if status == 'approved' and referencia == EXTERNAL_REFERENCE_DO_EBOOK:
                     enviar_email(email_cliente, nome_cliente)
