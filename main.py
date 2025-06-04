@@ -16,6 +16,10 @@ SMTP_PORTA = 587
 
 LINK_EBOOK = 'https://drive.google.com/file/d/1Akd6zzThAvoQug8ksNLEB8xB6ngZQfdE/view?usp=drive_link'
 
+# ✅ ROTA RAIZ
+@app.route('/')
+def home():
+    return '🚀 Funcionando! Webhook de pagamento ativo.'
 
 # === WEBHOOK DO MERCADO PAGO ===
 @app.route('/webhook', methods=['POST'])
